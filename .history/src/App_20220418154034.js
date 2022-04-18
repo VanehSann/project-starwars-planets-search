@@ -3,7 +3,7 @@ import './App.css';
 
 function App() {
   return (
-    <span>Fazendo Pull Request!</span>
+    <span>Hello, App!</span>
   );
 }
 
