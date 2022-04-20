@@ -7,6 +7,10 @@
   pointer-events: none;
 }
 
+td, th, tr {
+  border: 1px solid;
+}
+
 @media ( prefers-reduced-motion : no-preference ) {
 
   .App-logo {
