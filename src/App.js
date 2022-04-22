@@ -1,25 +1,109 @@
+/* eslint-disable no-unused-expressions */
 import React, { useEffect, useState } from 'react';
 import './App.css';
+import { fetchAPIReturn, selectRemovedA, selectRemovedB } from './servicesFunc';
 
+// eslint-disable-next-line sonarjs/cognitive-complexity
 function App() {
-  // constructor
-  const [planets, setState] = useState({}); // null
-  // componetDidMount
+  // https://www.youtube.com/watch?v=tcu938s1e_w
+  // <<< sugestão do youtube, de setar dois states
+  // Um pra array e length === 0 e outro length > 0 >>>
+  const [planetsInic, setStateInic] = useState({});
+  const [planets, setState] = useState({});
+  //
+  const [comparason, setStateComparason] = useState('maior que');
+  //
+  const [column, setStateColumn] = useState('population');
+  //
+  const [population, setStatePopulation] = useState(false);
+  const [orbital, setStateOrbital] = useState(false);
+  const [diameter, setStateDiameter] = useState(false);
+  const [surface, setStateSurface] = useState(false);
+  const [rotation, setStateRotation] = useState(false);
+  //
+  const [values, setStateValue] = useState(0);
+
   useEffect(() => {
     const requestAPI = async () => {
-      const fetchAPI = await fetch('https://swapi-trybe.herokuapp.com/api/planets/');
-      const jsonAPI = await fetchAPI.json();
-      const { results } = jsonAPI;
-
+      const results = await fetchAPIReturn();
+      setStateInic(results);
       setState(results);
-      // console.log(jsonAPI.results);
     };
     requestAPI();
   }, []);
+
+  const clickFilter = () => {
+    selectRemovedA(column, setStatePopulation, setStateOrbital, setStateDiameter);
+    selectRemovedB(column, setStateRotation, setStateSurface);
+
+    if (comparason === 'maior que') {
+      const filterByOthers = planets.filter((info) => info[column] > Number(values));
+      return setState(filterByOthers);
+    }
+    if (comparason === 'menor que') {
+      const filterByOthers = planets.filter((info) => info[column] < Number(values));
+      return setState(filterByOthers);
+    }
+    if (comparason === 'igual a') {
+      const filterByOthers = planets
+        .filter((info) => Number(info[column]) === Number(values));
+      return setState(filterByOthers);
+    }
+  };
   return (
     <>
       <h1>Projeto Star Wars - Trybe!</h1>
+      <label htmlFor="name-filter">
+        <input
+          name="name-filter"
+          type="text"
+          data-testid="name-filter"
+          id="name-filter"
+          onChange={ (event) => (event.target.value.length > 0
+            ? setState(planets.filter((info) => info.name.includes(event.target.value)))
+            : setState(planetsInic)) }
+        />
+      </label>
+      <select
+        name="column-filter"
+        data-testid="column-filter"
+        onChange={ (event) => setStateColumn(event.target.value) }
+        value={ column }
+      >
+        { !population ? <option>population</option> : '' }
+        { !orbital ? <option>orbital_period</option> : '' }
+        { !diameter ? <option>diameter</option> : '' }
+        { !rotation ? <option>rotation_period</option> : '' }
+        { !surface ? <option>surface_water</option> : '' }
+      </select>
+      <select
+        name="comparison-filter"
+        data-testid="comparison-filter"
+        onChange={ (event) => setStateComparason(event.target.value) }
+        value={ comparason }
+      >
+        <option>maior que</option>
+        <option>menor que</option>
+        <option>igual a</option>
+      </select>
+      <label htmlFor="value-filter">
+        <input
+          name="value-filter"
+          type="number"
+          data-testid="value-filter"
+          id="value-filter"
+          onChange={ (event) => setStateValue(event.target.value) }
+          value={ values }
+        />
+      </label>
+      <button
+        data-testid="button-filter"
+        type="button"
+        onClick={ () => clickFilter() }
+      >
+        Filtrar
 
+      </button>
       <table>
         <thead>
           <tr>
@@ -31,26 +115,25 @@ function App() {
           </tr>
         </thead>
         <tbody>
-          { planets[0] && Object.values(planets).map((values, index) => (
+          { planets[0] && Object.values(planets).map((info, index) => (
             <tr key={ index }>
-              <td key={ values.name }>{values.name}</td>
-              <td key={ values.rotation_period }>{values.rotation_period}</td>
-              <td key={ values.orbital_period }>{ values.orbital_period}</td>
-              <td key={ values.diameter }>{values.diameter}</td>
-              <td key={ values.climate }>{values.climate}</td>
-              <td key={ values.gravity }>{values.gravity}</td>
-              <td key={ values.terrain }>{values.terrain}</td>
-              <td key={ values.surface_water }>{values.surface_water}</td>
-              <td key={ values.population }>{values.population}</td>
-              <td key={ values.films }>{values.films}</td>
-              <td key={ values.created }>{values.created}</td>
-              <td key={ values.edited }>{values.edited}</td>
-              <td key={ values.url }>{values.url}</td>
+              <td key={ info.name }>{info.name}</td>
+              <td key={ info.rotation_period }>{info.rotation_period}</td>
+              <td key={ info.orbital_period }>{ info.orbital_period}</td>
+              <td key={ info.diameter }>{info.diameter}</td>
+              <td key={ info.climate }>{info.climate}</td>
+              <td key={ info.gravity }>{info.gravity}</td>
+              <td key={ info.terrain }>{info.terrain}</td>
+              <td key={ info.surface_water }>{info.surface_water}</td>
+              <td key={ info.population }>{info.population}</td>
+              <td key={ info.films }>{info.films}</td>
+              <td key={ info.created }>{info.created}</td>
+              <td key={ info.edited }>{info.edited}</td>
+              <td key={ info.url }>{info.url}</td>
             </tr>
           ))}
         </tbody>
       </table>
-
     </>
   );
 }
