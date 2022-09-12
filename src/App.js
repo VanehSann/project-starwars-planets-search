@@ -1,9 +1,7 @@
-/* eslint-disable no-unused-expressions */
 import React, { useEffect, useState } from 'react';
 import './App.css';
 import { fetchAPIReturn, selectRemovedA, selectRemovedB } from './servicesFunc';
 
-// eslint-disable-next-line sonarjs/cognitive-complexity
 function App() {
   // https://www.youtube.com/watch?v=tcu938s1e_w
   // <<< sugestão do youtube, de setar dois states
@@ -22,6 +20,8 @@ function App() {
   const [rotation, setStateRotation] = useState(false);
   //
   const [values, setStateValue] = useState(0);
+  //
+  const [filtros, setStateFiltros] = useState(false);
 
   useEffect(() => {
     const requestAPI = async () => {
@@ -35,7 +35,7 @@ function App() {
   const clickFilter = () => {
     selectRemovedA(column, setStatePopulation, setStateOrbital, setStateDiameter);
     selectRemovedB(column, setStateRotation, setStateSurface);
-
+    setStateFiltros(true);
     if (comparason === 'maior que') {
       const filterByOthers = planets.filter((info) => info[column] > Number(values));
       return setState(filterByOthers);
@@ -104,6 +104,21 @@ function App() {
         Filtrar
 
       </button>
+      <button
+        data-testid="button-remove-filters"
+        type="button"
+        onClick={ () => setStateFiltros(false) }
+      >
+        Remover Filtros
+
+      </button>
+      { filtros && (
+        <section>
+          <p>{column}</p>
+          <p>{comparason}</p>
+          <p>{values}</p>
+          <button type="button" data-testid="filter"> X </button>
+        </section>)}
       <table>
         <thead>
           <tr>
