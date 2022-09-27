@@ -6,7 +6,7 @@
 </p>
 <h1 align="center">
 Starwars Planets Search Project
-  <span> ( 🇧🇷 )  </span>
+  <span> (🇧🇷)  </span>
 </h1>
 
 <br>
